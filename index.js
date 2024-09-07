@@ -19,10 +19,14 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/user", require("./routes/user"));
-app.use("/order", require("./routes/order"));
-app.use("/counter", require("./routes/counter"));
-app.use("/tod", require("./routes/tod"));
+app.get("/", function (req, res) {
+  return res.send("Hello world!");
+});
+
+app.use("/user", require("./routes/users"));
+// app.use("/order", require("./routes/order"));
+// app.use("/counter", require("./routes/counter"));
+// app.use("/tod", require("./routes/tod"));
 
 app.listen(3000, () => {
   console.log("server started on port 3000");
