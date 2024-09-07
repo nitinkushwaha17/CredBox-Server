@@ -9,6 +9,10 @@ const StatusSchema = new mongoose.Schema({
   time_accepted: {
     type: Date,
   },
+  accepted_by: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = mongoose.model("Status", StatusSchema);
