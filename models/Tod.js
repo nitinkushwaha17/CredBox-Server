@@ -12,6 +12,7 @@ const TodSchema = new mongoose.Schema({
       "all_day",
     ],
     required: true,
+    unique: true,
   },
   start_time: {
     type: Date,

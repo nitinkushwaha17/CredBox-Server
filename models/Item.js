@@ -5,12 +5,7 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  is_custom: {
-    type: Boolean,
-    default: true,
-    required: true,
-  },
-  counter_id: {
+  counter: {
     type: mongoose.Types.ObjectId,
     ref: "Counter",
   },
@@ -19,12 +14,7 @@ const ItemSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
-  status_id: {
-    type: mongoose.Types.ObjectId,
-    ref: "Status",
-    required: true,
-  },
-  tod_id: {
+  tod: {
     type: mongoose.Types.ObjectId,
     ref: "Tod",
   },

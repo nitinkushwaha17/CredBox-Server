@@ -5,7 +5,7 @@ const CafeteriaSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  city_id: {
+  city: {
     type: mongoose.Types.ObjectId,
     ref: "City",
     required: true,

@@ -5,13 +5,7 @@ const StatusSchema = new mongoose.Schema({
     type: String,
     enum: ["new", "in_process", "completed", "expired"],
     required: true,
-  },
-  time_accepted: {
-    type: Date,
-  },
-  accepted_by: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
+    unique: true,
   },
 });
 
