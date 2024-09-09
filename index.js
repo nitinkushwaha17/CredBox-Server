@@ -24,9 +24,15 @@ app.get("/", function (req, res) {
 });
 
 app.use("/user", require("./routes/users"));
-// app.use("/order", require("./routes/order"));
+app.use("/order", require("./routes/orders"));
 // app.use("/counter", require("./routes/counter"));
 // app.use("/tod", require("./routes/tod"));
+
+// Error-handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 app.listen(3000, () => {
   console.log("server started on port 3000");
