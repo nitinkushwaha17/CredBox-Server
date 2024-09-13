@@ -14,20 +14,6 @@ module.exports.getSingleOrder = async (req, res) => {
 };
 
 module.exports.getAllOrders = async (req, res) => {
-  // new orders
-  const newStatusId = await Status.findOne({ name: "new" }, "_id");
-  const newStatusItemIds = await Item.find({ status: newStatusId }, "_id");
-  const newOrders = await Order.find({
-    user: { $ne: req.query.user_id },
-    item: newStatusItemIds,
-  });
-  const newCustomOrders = await Order.find({
-    user: { $ne: req.query.user_id },
-    custom_item: {
-      tod: newStatusId,
-    },
-  });
-
   // orders in process but not completed
   const inProcessStatusId = await Status.findOne({ name: "in_process" }, "_id");
   const inProcessStatusItemIds = await Item.find(
@@ -49,36 +35,57 @@ module.exports.getAllOrders = async (req, res) => {
     accepted_at: { $lt: Date.now() - 5 * 60 * 1000 },
   });
 
-  // TODO: pagination and filtering
-  const allOrders = [
-    ...newOrders,
-    ...newCustomOrders,
+  await updateOrdersInProcessToNew([
     ...inProcessOrders,
     ...inProcessCustomOrders,
-  ];
+  ]);
+
+  // new orders
+  const newStatusId = await Status.findOne({ name: "new" }, "_id");
+  const newStatusItemIds = await Item.find({ status: newStatusId }, "_id");
+  const newOrders = await Order.find({
+    user: { $ne: req.query.user_id },
+    item: newStatusItemIds,
+  }).populate({
+    path: "item",
+    populate: "counter tod",
+  });
+  const newCustomOrders = await Order.find({
+    user: { $ne: req.query.user_id },
+    custom_item: {
+      tod: newStatusId,
+    },
+  }).populate({
+    path: "custom_item.tod",
+  });
+
+  // TODO: pagination and filtering
+  const allOrders = [...newOrders, ...newCustomOrders];
 
   return res.status(200).json(allOrders);
 };
 
 module.exports.getMyOrders = async (req, res) => {
-  // const myOrders = await Order.find({
-  //   user: req.query.user_id,
-  // }).populate("item custom_item.tod");
-  // return res.status(200).json(myOrders);
+  const myOrders = await Order.find({
+    user: req.query.user_id,
+  }).populate("item custom_item.tod");
+  return res.status(200).json(myOrders);
 };
 
 module.exports.newOrder = async (req, res) => {
+  const newStatusId = await Status.findOne({ name: "new" }, "_id");
+
   if (req.body.is_custom) {
     const order = new Order({
       is_custom: true,
-      item: {
+      custom_item: {
         name: req.body.name,
         price: req.body.price,
         counter_name: req.body.counter,
         tod_id: req.body.tod_id,
       },
-      status: Status.findOne({ name: "new" }, "_id"),
-      user_id: req.body.user_id,
+      status: newStatusId,
+      user: req.body.user_id,
     });
     await order.save();
     return res.status(201).json(order);
@@ -86,7 +93,7 @@ module.exports.newOrder = async (req, res) => {
     const order = new Order({
       user: req.body.user_id,
       item: req.body.item_id,
-      status: Status.findOne({ name: "new" }, "_id"),
+      status: await Status.findOne({ name: "new" }, "_id"),
     });
     await order.save();
     return res.status(201).json(order);
@@ -108,3 +115,8 @@ module.exports.deleteOrder = async (req, res) => {
 
   return res.status(200).json({ message: "Order deleted successfully" });
 };
+
+async function updateOrdersInProcessToNew(orderIds) {
+  const newStatusId = await Status.findOne({ name: "new" });
+  await Order.updateMany({ _id: orderIds }, { status: newStatusId });
+}
