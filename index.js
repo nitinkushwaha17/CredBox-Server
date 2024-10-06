@@ -19,14 +19,20 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.post("*", function (req, res) {
+  console.log(req.body);
+  return res.status(200).json({ msg: "Hello world!" });
+});
+
 app.get("/", function (req, res) {
-  return res.send("Hello world!");
+  console.log("request");
+  return res.status(200).json({ msg: "Hello world!" });
 });
 
 app.use("/user", require("./routes/users"));
 app.use("/order", require("./routes/orders"));
 // app.use("/counter", require("./routes/counter"));
-// app.use("/tod", require("./routes/tod"));
+app.use("/tod", require("./routes/tods"));
 
 // Error-handling middleware
 app.use((err, req, res, next) => {

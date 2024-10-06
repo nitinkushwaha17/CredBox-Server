@@ -3,23 +3,19 @@ const mongoose = require("mongoose");
 const TodSchema = new mongoose.Schema({
   name: {
     type: String,
-    enum: [
-      "early_breakfast",
-      "breakfast",
-      "lunch",
-      "snacks",
-      "dinner",
-      "all_day",
-    ],
     required: true,
     unique: true,
   },
   start_time: {
-    type: Date,
+    type: Number,
+    minValue: 0,
+    maxValue: 2359,
     required: true,
   },
   end_time: {
-    type: Date,
+    type: Number,
+    minValue: 0,
+    maxValue: 2359,
     required: true,
   },
 });
