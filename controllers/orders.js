@@ -15,6 +15,8 @@ module.exports.getSingleOrder = async (req, res) => {
 
 module.exports.getAllOrders = async (req, res) => {
   // orders in process but not completed
+  const newStatusId = await Status.findOne({ name: "new" }, "_id");
+
   const inProcessStatusId = await Status.findOne({ name: "in_process" }, "_id");
   const inProcessStatusItemIds = await Item.find(
     {
@@ -29,9 +31,7 @@ module.exports.getAllOrders = async (req, res) => {
   });
   const inProcessCustomOrders = await Order.find({
     user: { $ne: req.query.user_id },
-    custom_item: {
-      tod: newStatusId,
-    },
+    status: newStatusId,
     accepted_at: { $lt: Date.now() - 5 * 60 * 1000 },
   });
 
@@ -41,7 +41,6 @@ module.exports.getAllOrders = async (req, res) => {
   ]);
 
   // new orders
-  const newStatusId = await Status.findOne({ name: "new" }, "_id");
   const newStatusItemIds = await Item.find({ status: newStatusId }, "_id");
   const newOrders = await Order.find({
     user: { $ne: req.query.user_id },
@@ -50,17 +49,33 @@ module.exports.getAllOrders = async (req, res) => {
     path: "item",
     populate: "counter tod",
   });
+
   const newCustomOrders = await Order.find({
     user: { $ne: req.query.user_id },
-    custom_item: {
-      tod: newStatusId,
-    },
-  }).populate({
-    path: "custom_item.tod",
-  });
+    status: newStatusId,
+  })
+    .populate({
+      path: "custom_item.tod",
+    })
+    .then((items) => {
+      console.log(items);
+      let newCustomOrders = [];
+      items.forEach((item) => {
+        newCustomOrders.push({
+          item: item.custom_item.name,
+          price: item.custom_item.price,
+          counter: item.custom_item.counter_name,
+          tod: item.custom_item.tod.name,
+        });
+      });
+      return newCustomOrders;
+    });
+
+  // .lean()
 
   // TODO: pagination and filtering
   const allOrders = [...newOrders, ...newCustomOrders];
+  console.log(newCustomOrders);
 
   return res.status(200).json(allOrders);
 };
@@ -79,14 +94,15 @@ module.exports.newOrder = async (req, res) => {
     const order = new Order({
       is_custom: true,
       custom_item: {
-        name: req.body.name,
+        name: req.body.item,
         price: req.body.price,
         counter_name: req.body.counter,
-        tod_id: req.body.tod_id,
+        tod: req.body.tod_id,
       },
       status: newStatusId,
       user: req.body.user_id,
     });
+
     await order.save();
     return res.status(201).json(order);
   } else {
