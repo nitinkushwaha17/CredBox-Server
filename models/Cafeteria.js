@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const CafeteriaSchema = new mongoose.Schema({
-  cafeteria_name: {
+  name: {
     type: String,
     required: true,
   },

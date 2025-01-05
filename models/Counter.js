@@ -5,10 +5,6 @@ const CounterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tod: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: "Tod",
-  },
   cafeteria: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "Cafeteria",

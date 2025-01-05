@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const { TOD } = require("../constants");
 
 const TodSchema = new mongoose.Schema({
   name: {
     type: String,
+    enum: Object.values(TOD),
     required: true,
     unique: true,
   },

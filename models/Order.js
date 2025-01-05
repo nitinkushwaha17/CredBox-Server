@@ -28,12 +28,15 @@ const OrderSchema = new mongoose.Schema({
       ref: "Tod",
     },
   },
-  Ordered_at: {
+  ordered_at: {
     type: Date,
     default: Date.now(),
   },
   order_pin: String,
   accepted_at: {
+    type: Date,
+  },
+  completed_at: {
     type: Date,
   },
   accepted_by: {
