@@ -197,6 +197,7 @@ module.exports.completeOrder = async (req, res) => {
 
   if (order.status.name === STATUS.IN_PROCESS) {
     order.status = completedStatusId;
+    order.order_pin = req.body.pin;
     order.completed_at = Date.now();
   } else {
     return res.status(409).json({ message: "Invalid order" });
