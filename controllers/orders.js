@@ -12,16 +12,10 @@ module.exports.getSingleOrder = async (req, res) => {
     })
     .populate({
       path: "status custom_item.tod",
-    })
-    .sort({ ordered_at: -1 });
+    });
 
   order = buildOrderResponse(order);
-  // if (!order.is_custom) {
-  //   await order.populate({
-  //     path: "item status",
-  //     populate: { path: "item.counter item.tod" },
-  //   });
-  // }
+
   return res.status(200).json(order);
 };
 
