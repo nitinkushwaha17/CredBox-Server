@@ -132,32 +132,36 @@ module.exports.getMyOrders = async (req, res) => {
 };
 
 module.exports.newOrder = async (req, res) => {
+  console.log(req.body);
   const newStatusId = await Status.findOne({ name: STATUS.NEW }, "_id");
 
   if (req.body.is_custom) {
-    const order = new Order({
-      is_custom: true,
-      custom_item: {
-        name: req.body.item,
-        price: req.body.price,
-        counter_name: req.body.counter,
-        tod: req.body.tod_id,
-      },
-      status: newStatusId,
-      user: req.body.user_id,
-    });
+    for (let i = 0; i < req.body.quantity; i++) {
+      const order = new Order({
+        is_custom: true,
+        custom_item: {
+          name: req.body.item,
+          price: req.body.price,
+          counter_name: req.body.counter,
+          tod: req.body.tod_id,
+        },
+        status: newStatusId,
+        user: req.body.user_id,
+      });
+      await order.save();
+    }
+    return res.status(201).json("order created");
+  }
 
-    await order.save();
-    return res.status(201).json(order);
-  } else {
+  for (let i = 0; i < req.body.quantity; i++) {
     const order = new Order({
       user: req.body.user_id,
       item: req.body.item_id,
-      status: await Status.findOne({ name: "new" }, "_id"),
+      status: newStatusId,
     });
     await order.save();
-    return res.status(201).json(order);
   }
+  return res.status(201).json("order created");
 };
 
 module.exports.acceptOrder = async (req, res) => {
