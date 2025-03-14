@@ -37,6 +37,7 @@ app.get("/", function (req, res) {
 app.use("/user", require("./routes/users"));
 app.use("/order", require("./routes/orders"));
 app.use("/counter", require("./routes/counters"));
+app.use("/item", require("./routes/items"));
 app.use("/tod", require("./routes/tods"));
 
 // Error-handling middleware
