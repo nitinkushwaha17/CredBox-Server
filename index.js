@@ -11,6 +11,11 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+require("./models/Cafeteria");
+require("./models/City");
+require("./models/Counter");
+require("./models/Item");
+
 const app = express();
 
 if (process.env.NODE_ENV !== "production") {
@@ -31,7 +36,7 @@ app.get("/", function (req, res) {
 
 app.use("/user", require("./routes/users"));
 app.use("/order", require("./routes/orders"));
-// app.use("/counter", require("./routes/counter"));
+app.use("/counter", require("./routes/counters"));
 app.use("/tod", require("./routes/tods"));
 
 // Error-handling middleware
