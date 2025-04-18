@@ -114,17 +114,42 @@ const getOrdersCompletedByMe = async (req, res) => {
 };
 
 module.exports.getMyOrders = async (req, res) => {
-  let myOrders = await Order.find({
-    user: req.query.user_id,
-  })
-    .populate({
-      path: "item",
-      populate: "counter tod",
+  let numRecent = req.query.num;
+
+  let myOrders = [];
+
+  if (numRecent) {
+    const completedStatusId = await Status.findOne(
+      { name: STATUS.COMPLETED },
+      "_id"
+    );
+
+    myOrders = await Order.find({
+      user: req.query.user_id,
+      status: completedStatusId,
     })
-    .populate({
-      path: "status custom_item.tod",
+      .populate({
+        path: "item",
+        populate: "counter tod",
+      })
+      .populate({
+        path: "status custom_item.tod",
+      })
+      .sort({ completed_at: -1 })
+      .limit(numRecent);
+  } else {
+    myOrders = await Order.find({
+      user: req.query.user_id,
     })
-    .sort({ ordered_at: -1 });
+      .populate({
+        path: "item",
+        populate: "counter tod",
+      })
+      .populate({
+        path: "status custom_item.tod",
+      })
+      .sort({ ordered_at: -1 });
+  }
 
   myOrders = buildOrderResponse(myOrders);
 
