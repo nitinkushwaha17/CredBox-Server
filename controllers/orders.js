@@ -133,6 +133,8 @@ module.exports.getMyOrders = async (req, res) => {
 
 module.exports.newOrder = async (req, res) => {
   console.log(req.body);
+  if (!req.body.quantity) req.body.quantity = 1;
+
   const newStatusId = await Status.findOne({ name: STATUS.NEW }, "_id");
 
   if (req.body.is_custom) {
@@ -170,7 +172,7 @@ module.exports.acceptOrder = async (req, res) => {
     "_id"
   );
 
-  console.log(req.body.order_id);
+  // console.log(req.body.order_id);
 
   const order = await Order.findOne({
     _id: req.body.order_id,
