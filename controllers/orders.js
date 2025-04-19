@@ -114,11 +114,12 @@ const getOrdersCompletedByMe = async (req, res) => {
 };
 
 module.exports.getMyOrders = async (req, res) => {
-  let numRecent = req.query.num;
+  const numRecent = req.query.num;
+  const type = req.query.type;
 
   let myOrders = [];
 
-  if (numRecent) {
+  if (numRecent && type === "completed") {
     const completedStatusId = await Status.findOne(
       { name: STATUS.COMPLETED },
       "_id"
@@ -148,7 +149,8 @@ module.exports.getMyOrders = async (req, res) => {
       .populate({
         path: "status custom_item.tod",
       })
-      .sort({ ordered_at: -1 });
+      .sort({ ordered_at: -1 })
+      .limit(type === "recent" ? numRecent : 0);
   }
 
   myOrders = buildOrderResponse(myOrders);
