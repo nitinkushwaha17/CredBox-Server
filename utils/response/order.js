@@ -4,6 +4,7 @@ module.exports.buildOrderResponse = (orders) => {
       id: order._id,
       status: order.status.name,
       item: order.is_custom ? order.custom_item.name : order.item.name,
+      item_id: order.is_custom ? null : order.item._id,
       price: order.is_custom ? order.custom_item.price : order.item.price,
       counter: order.is_custom
         ? order.custom_item.counter_name
