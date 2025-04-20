@@ -1,4 +1,5 @@
 const Item = require("../models/Item");
+const { buildItemResponse } = require("../utils/response/item");
 
 module.exports.getAllCounterItems = async (req, res) => {
   let items = await Item.find(
@@ -9,5 +10,5 @@ module.exports.getAllCounterItems = async (req, res) => {
     "_id name price"
   );
 
-  return res.status(200).json(items);
+  return res.status(200).json(buildItemResponse(items));
 };
