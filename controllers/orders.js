@@ -252,7 +252,7 @@ module.exports.deleteOrder = async (req, res) => {
   }).populate("status");
 
   if (!order) return res.status(404).send({ message: "Order not found" });
-  if (order.status !== STATUS.NEW)
+  if (order.status.name !== STATUS.NEW)
     return res.status(400).send({ message: "Order cannot be deleted" });
 
   await Order.findByIdAndDelete(req.body.order_id);

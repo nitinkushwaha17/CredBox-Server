@@ -2,7 +2,7 @@ module.exports.buildItemResponse = (items) => {
   const build = (item) => {
     return {
       id: item._id,
-      name: item.name,
+      item: item.name,
       price: item.price,
     };
   };
