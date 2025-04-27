@@ -44,7 +44,7 @@ module.exports.getAllOrders = async (req, res) => {
   // all orders
   let allOrders = await Order.find({
     user: { $ne: req.query.user_id },
-    status: newStatusId,
+    status: [newStatusId, inProcessStatusId],
   })
     .populate({
       path: "item",
