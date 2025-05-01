@@ -155,6 +155,20 @@ module.exports.getMyOrders = async (req, res) => {
       })
       .sort({ ordered_at: -1 })
       .limit(type === "recent" ? numRecent : 0);
+
+    if (type === "recent") {
+      let uniqueOrders = [];
+      const set = new Set();
+
+      myOrders.forEach((item) => {
+        console.log(item);
+        if (!set.has(item.item._id)) {
+          uniqueOrders.push(item);
+          set.add(item.item._id);
+        }
+      });
+      myOrders = uniqueOrders;
+    }
   }
 
   myOrders = buildOrderResponse(myOrders);
