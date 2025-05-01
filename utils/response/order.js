@@ -10,6 +10,7 @@ module.exports.buildOrderResponse = (orders) => {
         ? order.custom_item.counter_name
         : order.item.counter.name,
       tod: order.is_custom ? order.custom_item.tod.name : order.item.tod.name,
+      pin: order.order_pin,
     };
   };
 
