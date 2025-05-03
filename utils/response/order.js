@@ -11,6 +11,7 @@ module.exports.buildOrderResponse = (orders) => {
         : order.item.counter.name,
       tod: order.is_custom ? order.custom_item.tod.name : order.item.tod.name,
       pin: order.order_pin,
+      accepted_at: order.accepted_at ?? null,
     };
   };
 
