@@ -237,6 +237,8 @@ module.exports.acceptOrder = async (req, res) => {
 };
 
 module.exports.completeOrder = async (req, res) => {
+  const isEditRequest = req.body.edit;
+
   const completedStatusId = await Status.findOne(
     { name: STATUS.COMPLETED },
     "_id"
@@ -246,7 +248,10 @@ module.exports.completeOrder = async (req, res) => {
     _id: req.body.order_id,
   }).populate("status");
 
-  if (order.status.name === STATUS.IN_PROCESS) {
+  if (
+    order.status.name === STATUS.IN_PROCESS ||
+    (order.status.name === STATUS.COMPLETED && isEditRequest)
+  ) {
     order.status = completedStatusId;
     order.order_pin = req.body.pin;
     order.completed_at = Date.now();
