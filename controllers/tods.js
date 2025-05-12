@@ -1,4 +1,4 @@
-const Tod = require("../models/tod");
+const Tod = require("../models/Tod");
 const { getCurrentTimeAsHHMM } = require("../utils/time");
 
 module.exports.getAllTods = async (req, res) => {
